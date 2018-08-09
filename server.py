@@ -3,6 +3,8 @@
 import urllib2, re, socket
 from urlparse import urlparse
 import sys
+import argparse
+
 
 # Parametre olarak verilen Url'e ait olan Domain Name'i geriye döndürür.
 def getDomainName(url):
@@ -30,42 +32,74 @@ def getLinksFromUrl(url):
 
 # Performans değerlendirme kriteri
 def getInfo(url):
-    domain=getDomainName(url)
-    links=getLinksFromUrl(url)
-    recursiveUrls=[]
-    externalUrls=[]
-    for link in links:
-        if domain==getDomainName(link):
-            recursiveUrls.append(link)
-        else:
-            externalUrls.append(link)
+    try:
+        url=url.replace("\n","")
+        domain=getDomainName(url)
+        print("Url............: [ %s ] " %url)
+        print("Domain.........: [ %s ] " %domain)
+        print("Ip Addresses...: [ %s ] " %getIPAddresses(url))
+        links=getLinksFromUrl(url)
+        print("Found Links....: [ %d ] " %len(links))
+        recursiveUrls=[]
+        externalUrls=[]
+        for link in links:
+            if domain==getDomainName(link):
+                recursiveUrls.append(link)
+            else:
+                externalUrls.append(link)
 
-    print("Url............: [ %s ] " %url)
-    print("Domain.........: [ %s ] " %domain)
-    print("Found Links....: [ %d ] " %len(links))
-    print("Recursives.....: [ %d ] " %len(recursiveUrls))
-    print("Externals......: [ %d ] " %len(externalUrls))
-    print("Ip Addresses...: [ %s ] " %getIPAddresses(url))
-    print("\n")
-    return links
+        print("Recursives.....: [ %d ] " %len(recursiveUrls))
+        print("Externals......: [ %d ] " %len(externalUrls))
+        print("\n")
+        i=0
+        for link in recursiveUrls:
+            i=i+1
+            print(str(i)+"-) "+link)
 
-try:
-    program_name = sys.argv[0]
-    arguments = sys.argv[1:]
-    count = len(arguments)
-    url = arguments[0]
+        for link in externalUrls:
+            i=i+1
+            print(str(i)+"-) "+link)
 
-    for url in arguments:
+
+    except Exception as e:
+        print("\033[1;31;1m")
+        print("!"+type(e).__name__+" => "+url)
+        print("\033[1;37;0m")
+        print("\n")
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--urls", "-u",action='append',help = "Url Adresleri; Her adres için -u gerekir.")
+parser.add_argument("--file","-f",help = "Url Adreslerinin Bulunduğu Dosya Yolu")
+# Gelen argümanları ayırıyoruz ve bir değişkene aktarıyoruz
+arguments = parser.parse_args()
+
+# İki parametre aynı anda girilirse uyarı verilir.
+if(arguments.urls and arguments.file):
+    print("Aynı anda dosya ve komut satırından parametre girilemez.")
+    print("Tek parametre kullanınız.")
+
+
+elif(arguments.urls):
+
+    for url in arguments.urls:
         getInfo(url)
 
+elif(arguments.file):
+    path=arguments.file;
 
-    file = open("testfile.txt", "r")
-    urls = file.readlines()
+    try:
+        file = open("urls.txt", "r")
+        urls = file.readlines()
+        file.close()
 
-    for url in urls:
-        print(url)
+        for url in urls:
+            getInfo(url)
+            print("\n\n")
 
-    file.close()
-
-except Exception as e:
-    print(str(e))
+    except Exception as e:
+        print("\033[1;31;1m")
+        print("!"+type(e).__name__)
+        print("\033[1;37;0m")
+else:
+    print("Parametre Giriniz")
