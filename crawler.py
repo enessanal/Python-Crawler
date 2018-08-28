@@ -3,6 +3,7 @@ import argparse,re,socket,requests,threading
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from random import randint
 
 class SITE:
     list_a_same=[]
@@ -124,10 +125,6 @@ def getLinks(response,url):
     # source=BeautifulSoup(session.body(),'lxml')
 
     list_a=[]
-    list_script=[]
-    list_style=[]
-    list_img=[]
-
 
 
 
@@ -140,6 +137,7 @@ def getLinks(response,url):
         if(appendUrl!=None and appendUrl!="#" and
         appendUrl.find("javascript:")==-1 and
         appendUrl.find("javascript:void(0)")==-1 and
+        appendUrl.find("mailto:")==-1 and
         appendUrl.find(".jpg")==-1 and
         appendUrl.find(".pdf")==-1 and
         appendUrl.find(".jpeg")==-1 and
@@ -156,6 +154,7 @@ def crawlUrl(url):
     crawl_url=url.replace(" ","").replace("\n","").replace("\r","")
     # scheme://netloc/path;parameters?query#fragment
     UrlParseObject = urlparse(crawl_url)
+    # cprint(,"green")
     if(UrlParseObject.scheme==""):
         crawl_url="http://"+crawl_url
         UrlParseObject = urlparse(crawl_url)
@@ -217,7 +216,7 @@ except Exception as e:
 try:
     verbose_print("[ {} ] Url adresi doğrulanıyor...".format(SITE.url))
 
-    response=requests.get(SITE.url,timeout=5,headers=SITE.headers)
+    response=requests.get(SITE.url,timeout=3,headers=SITE.headers)
     if response.status_code==404:
         error_print("Geçersiz Url Adresi (404) X [{}] X".format(SITE.url))
         exit()
@@ -245,13 +244,6 @@ appendLinks(SITE.url,getLinks(response,SITE.url))
 arrayList=splitArray(SITE.list_a_same,args.threads)
 
 
-for arr in arrayList:
-    print(len(arr))
-
-
-
-
-exit()
 
 for j in range(0,args.depth):
 
@@ -267,8 +259,8 @@ for j in range(0,args.depth):
     for thread in threads:
         thread.join()
 
-SITE.list_a_same=removeDuplicates(SITE.list_a_same)
-SITE.list_a_different=removeDuplicates(SITE.list_a_different)
+    SITE.list_a_same=removeDuplicates(SITE.list_a_same)
+    SITE.list_a_different=removeDuplicates(SITE.list_a_different)
 
 # Elde edilen bilgilerin ekrana basılması
 print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
