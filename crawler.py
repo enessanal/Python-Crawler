@@ -13,9 +13,7 @@ class SITE:
     # Http Başlıklarındaki bazı alanlar eklenmez ise hatalar alınabiliyor.
     headers = { 'User-Agent': 'Sakarya University - CrawlerPy 1.0.0 - Enes Sanal - For Researching And Development', 'From':'enessanal@hotmail.com.tr'}
 
-
 ################################################################################
-
 
 # Dizideki tekrar eden elemanları kaldırır.
 def removeDuplicates(array):
@@ -36,13 +34,17 @@ class Thread(threading.Thread):
 # Verilen bir diziyi aldığı parametreye göre parçalara bölen ve geriye döndüren metot.
 def splitArray(array,slices):
     arrayList=[]
-
+    rest=[]
+    if(slices>len(array)):
+        return splitArray(array,len(array))
     for i in range(slices):
         first=(i)*(len(array)//slices)
         last=(i+1)*(len(array)//slices)
         if(i+1 == slices):
-            last=len(array)
+            rest=array[last:len(array)]
         arrayList.append(array[first:last])
+    while len(rest)>0:
+        arrayList[randint(0,len(arrayList)-1)].append(rest.pop())
     return arrayList
 # End of splitArray
 
@@ -236,10 +238,23 @@ except Exception as e:
     verbose_print("Programdan çıkılıyor.")
     exit()
 # End of Url doğrulama
-
 appendLinks(SITE.url,getLinks(response,SITE.url))
 
+
+
+arrayList=splitArray(SITE.list_a_same,args.threads)
+
+
+for arr in arrayList:
+    print(len(arr))
+
+
+
+
+exit()
+
 for j in range(0,args.depth):
+
     arrayList=splitArray(SITE.list_a_same,args.threads)
     threads=[]
     for array in arrayList:
