@@ -1,5 +1,5 @@
 #! /usr/bin/env python3.6
-import argparse,re,socket,requests,os,threading
+import argparse,re,socket,requests,threading
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
