@@ -180,7 +180,7 @@ parser.add_argument('-t', '--threads',help='Programın Çalışırken Kullanaca�
 args=parser.parse_args()
 
 # Url içinde (varsa) gereksiz karakterler kaldırılır.
-SITE.url=args.url.replace(" ","").replace("\n","").replace("\r","")
+SITE.url=args.url.replace(" ","").replace("\n","").replace("\r","").lower()
 
 # scheme://netloc/path;parameters?query#fragment
 UrlParseObject = urlparse(SITE.url)
@@ -283,6 +283,9 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 # End of ekrana basma
+
+
+
 
 
 
