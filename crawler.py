@@ -30,7 +30,9 @@ class Thread(threading.Thread):
 
     def run(self):
         for url in self.urlList:
-            if(url.find(".jpg")==-1 and
+            if(url.find(".ico")==-1 and
+            url.find(".gif")==-1 and
+            url.find(".jpg")==-1 and
             url.find(".png")==-1 and
             url.find(".pdf")==-1 and
             url.find(".jpeg")==-1 and
@@ -41,8 +43,6 @@ class Thread(threading.Thread):
             url.find(".xlsm")==-1 and
             url.find(".pptx")==-1):
                 crawlUrl(url)
-
-
 # End of Thread Class
 
 # Verilen bir diziyi aldığı parametreye göre parçalara bölen ve geriye döndüren metot.
@@ -143,7 +143,6 @@ def getLinks(response,url):
         if(lnk[0][len(lnk[0])-1]!="."):
             new_tag =source.new_tag('a',href=lnk[0])
             list_a.append(new_tag)
-            print(new_tag)
 
 
     for item in source.find_all('a'):
@@ -155,7 +154,6 @@ def getLinks(response,url):
         appendUrl.find("tel:")==-1):
             list_a.append(item)
     return list(set(list_a))
-    exit()
 # End of getLinks
 
 def crawlUrl(url):
@@ -170,9 +168,7 @@ def crawlUrl(url):
     if response:
         appendLinks(crawl_url,getLinks(response,crawl_url))
 
-
 ################################################################################
-
 
 # Help mesajını manipüle edebilmek için add_help=False seçeneğini ekledik.
 parser=argparse.ArgumentParser(description='CrawlerPy - Target Spesific Crawler',add_help=False)
@@ -181,7 +177,7 @@ parser.add_argument("-d","--depth",help="Crawl İşleminin Derinliği (Varsayıl
 parser.add_argument('-v',"--verbose", help="Ayrıntılı çıktı modu.", action="store_true")
 parser.add_argument('--version', action='version',version='%(prog)s 1.0', help="Programın versiyonunu yazdır ve çık.")
 parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,help='Yardım mesajını göster ve çık.')
-parser.add_argument('-t', '--threads',help='Programın Çalışırken Kullanacağı Thread Sayısı (Varsayılan=5)',type=int,default=5)
+parser.add_argument('-t', '--threads',help='Programın Çalışırken Kullanacağı Thread Sayısı (Varsayılan=50)',type=int,default=50)
 args=parser.parse_args()
 
 # Url içinde (varsa) gereksiz karakterler kaldırılır.
@@ -198,7 +194,6 @@ verbose_print("Program Başlatılıyor...")
 
 response=""
 
-
 # Verilen URL'e ait olan alan adını doğrular ve hata yoksa devam eder, hata varsa programdan çıkar.
 try:
     verbose_print("[ {} ] Alan adı doğrulanıyor...".format(UrlParseObject.netloc))
@@ -214,7 +209,6 @@ except Exception as e:
     verbose_print("Programdan çıkılıyor.")
     exit()
 # End of Alan adı doğrulama
-
 
 # Verilen Url in var olup olmadığını kontrol eder. Eğer hata varsa programı sonlandırır, yoksa devam eder.
 try:
@@ -245,7 +239,6 @@ appendLinks(SITE.url,getLinks(response,SITE.url))
 
 arrayList=splitArray(SITE.list_a_same,args.threads)
 
-
 SITE.list_a_same=removeDuplicates(SITE.list_a_same)
 SITE.list_a_different=removeDuplicates(SITE.list_a_different)
 
@@ -266,12 +259,10 @@ for j in range(0,args.depth):
     SITE.list_a_same=removeDuplicates(SITE.list_a_same)
     SITE.list_a_different=removeDuplicates(SITE.list_a_different)
 
-
 # Elde edilen bilgilerin ekrana basılması
 print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
 print("Url............: [ %s ] " %SITE.url)
 print("Domain.........: [ %s ] " %SITE.domainName)
-
 
 if len(SITE.IPList) > 1:
     print("IP Adresleri...: %s  " %SITE.IPList)
@@ -295,6 +286,11 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 # End of ekrana basma
+
+
+
+
+
 
 
 
