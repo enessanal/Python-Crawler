@@ -138,17 +138,14 @@ def getLinks(response,url):
     list_a=[]
     source=BeautifulSoup(response.content,'lxml')
 
-    # print(re.findall("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",str(source)))
+    # for lnk in re.findall("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",str(source)):
+    for lnk in re.findall('"((http|ftp)s?://.*?)"',str(source)):
+        if(lnk[0][len(lnk[0])-1]!="."):
+            new_tag =source.new_tag('a',href=lnk[0])
+            list_a.append(new_tag)
+            print(new_tag)
 
 
-
-
-
-
-
-
-
-    i=0
     for item in source.find_all('a'):
         appendUrl=item.get("href")
         if(appendUrl!=None and appendUrl!="#" and
@@ -158,6 +155,7 @@ def getLinks(response,url):
         appendUrl.find("tel:")==-1):
             list_a.append(item)
     return list(set(list_a))
+    exit()
 # End of getLinks
 
 def crawlUrl(url):
@@ -297,15 +295,6 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 # End of ekrana basma
-
-
-
-
-
-
-
-
-
 
 
 
