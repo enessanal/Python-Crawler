@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from random import randint
 import urllib.parse
+from progress.bar import Bar
 
 class SITE:
     list_a_same=[]
@@ -66,6 +67,7 @@ class Thread(threading.Thread):
             url.find(".pptx")==-1 and
             url.find(".PPTX")==-1):
                 crawlUrl(url)
+                bar.next()
 # End of Thread Class
 
 # Verilen bir diziyi aldığı parametreye göre parçalara bölen ve geriye döndüren metot.
@@ -268,7 +270,13 @@ SITE.list_a_same=removeDuplicates(SITE.list_a_same)
 SITE.list_a_different=removeDuplicates(SITE.list_a_different)
 SITE.list_a_same_crawl=removeDuplicates(SITE.list_a_same_crawl)
 
+
+
 for j in range(0,args.depth):
+
+
+    bar = Bar(str(j+1)+"/"+str(args.depth), max=len(SITE.list_a_same_crawl))
+
     arrayList=splitArray(SITE.list_a_same_crawl,args.threads)
     SITE.list_a_same_crawl=[]
     threads=[]
@@ -282,19 +290,13 @@ for j in range(0,args.depth):
     for thread in threads:
         thread.join()
 
+    bar.finish()
+
     SITE.list_a_same=removeDuplicates(SITE.list_a_same)
     SITE.list_a_different=removeDuplicates(SITE.list_a_different)
     SITE.list_a_same_crawl=removeDuplicates(SITE.list_a_same_crawl)
 
 # Elde edilen bilgilerin ekrana basılması
-print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
-print("Url............: [ %s ] " %SITE.url)
-print("Domain.........: [ %s ] " %SITE.domainName)
-
-if len(SITE.IPList) > 1:
-    print("IP Adresleri...: %s  " %SITE.IPList)
-else:
-    print("IP Adresi......: %s  " %SITE.IPList)
 
 if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
     print("\nLinkler:")
@@ -312,6 +314,19 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
     for link in SITE.list_a_same:
         i+=1
         print("{} -) {}".format(i,link))
+
+
+print()
+
+print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
+print("Url............: [ %s ] " %SITE.url)
+print("Domain.........: [ %s ] " %SITE.domainName)
+
+if len(SITE.IPList) > 1:
+    print("IP Adresleri...: %s  " %SITE.IPList)
+else:
+    print("IP Adresi......: %s  " %SITE.IPList)
+
 # End of ekrana basma
 
 
