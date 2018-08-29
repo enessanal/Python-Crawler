@@ -1,0 +1,18 @@
+echo "alias cls='clear'" | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias ..=\"cd ..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias ...=\"cd ..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias ....=\"cd ..\\..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias .....=\"cd ..\\..\\..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias ll=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFh --color=always\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias lls=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFhS --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias llsr=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFhSr --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias llt=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFht --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias lltr=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFhtr --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "deb http://http.kali.org/kali kali-rolling main contrib non-free" >> /etc/apt/sources.list
+apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys 7D8D0BF6
+apt-get update
+apt-get install htop
+curl -sL https://packagecloud.io/AtomEditor/atom/gpgkey | sudo apt-key add -
+sh -c 'echo "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main" > /etc/apt/sources.list.d/atom.list'
+apt-get update
+apt-get install atom
