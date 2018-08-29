@@ -8,6 +8,7 @@ import urllib.parse
 
 class SITE:
     list_a_same=[]
+    list_a_same_crawl=[]
     list_a_different=[]
     domainName=""
     url=""
@@ -31,17 +32,39 @@ class Thread(threading.Thread):
     def run(self):
         for url in self.urlList:
             if(url.find(".ico")==-1 and
+            url.find(".ICO")==-1 and
             url.find(".gif")==-1 and
+            url.find(".GIF")==-1 and
+            url.find(".epub")==-1 and
+            url.find(".EPUB")==-1 and
+            url.find(".mobi")==-1 and
+            url.find(".MOBI")==-1 and
+            url.find(".mp3")==-1 and
+            url.find(".MP3")==-1 and
+            url.find(".mp4")==-1 and
+            url.find(".MP4")==-1 and
+            url.find(".avi")==-1 and
+            url.find(".AVI")==-1 and
             url.find(".jpg")==-1 and
-            url.find(".png")==-1 and
-            url.find(".pdf")==-1 and
+            url.find(".JPG")==-1 and
             url.find(".jpeg")==-1 and
+            url.find(".JPEG")==-1 and
+            url.find(".png")==-1 and
+            url.find(".PNG")==-1 and
+            url.find(".pdf")==-1 and
+            url.find(".PDF")==-1 and
             url.find(".doc")==-1 and
+            url.find(".DOC")==-1 and
             url.find(".docx")==-1 and
+            url.find(".DOCX")==-1 and
             url.find(".xls")==-1 and
+            url.find(".XLS")==-1 and
             url.find(".xlsx")==-1 and
+            url.find(".XLSX")==-1 and
             url.find(".xlsm")==-1 and
-            url.find(".pptx")==-1):
+            url.find(".XLSM")==-1 and
+            url.find(".pptx")==-1 and
+            url.find(".PPTX")==-1):
                 crawlUrl(url)
 # End of Thread Class
 
@@ -69,6 +92,7 @@ def appendLinks(url,urlList):
 
             if(getDomainName(joinedUrl) == SITE.domainName):
                 SITE.list_a_same.append(joinedUrl)
+                SITE.list_a_same_crawl.append(joinedUrl)
             else:
                 SITE.list_a_different.append(joinedUrl)
 # End of appendLinks
@@ -235,16 +259,18 @@ except Exception as e:
     verbose_print("Programdan çıkılıyor.")
     exit()
 # End of Url doğrulama
+
 appendLinks(SITE.url,getLinks(response,SITE.url))
 
-arrayList=splitArray(SITE.list_a_same,args.threads)
+arrayList=splitArray(SITE.list_a_same_crawl,args.threads)
 
 SITE.list_a_same=removeDuplicates(SITE.list_a_same)
 SITE.list_a_different=removeDuplicates(SITE.list_a_different)
+SITE.list_a_same_crawl=removeDuplicates(SITE.list_a_same_crawl)
 
 for j in range(0,args.depth):
-
-    arrayList=splitArray(SITE.list_a_same,args.threads)
+    arrayList=splitArray(SITE.list_a_same_crawl,args.threads)
+    SITE.list_a_same_crawl=[]
     threads=[]
     for array in arrayList:
         thread=Thread(array)
@@ -258,6 +284,7 @@ for j in range(0,args.depth):
 
     SITE.list_a_same=removeDuplicates(SITE.list_a_same)
     SITE.list_a_different=removeDuplicates(SITE.list_a_different)
+    SITE.list_a_same_crawl=removeDuplicates(SITE.list_a_same_crawl)
 
 # Elde edilen bilgilerin ekrana basılması
 print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
@@ -286,8 +313,6 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 # End of ekrana basma
-
-
 
 
 
