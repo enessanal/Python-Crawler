@@ -30,7 +30,19 @@ class Thread(threading.Thread):
 
     def run(self):
         for url in self.urlList:
-             crawlUrl(url)
+            if(url.find(".jpg")==-1 and
+            url.find(".png")==-1 and
+            url.find(".pdf")==-1 and
+            url.find(".jpeg")==-1 and
+            url.find(".doc")==-1 and
+            url.find(".docx")==-1 and
+            url.find(".xls")==-1 and
+            url.find(".xlsx")==-1 and
+            url.find(".xlsm")==-1 and
+            url.find(".pptx")==-1):
+                crawlUrl(url)
+
+
 # End of Thread Class
 
 # Verilen bir diziyi aldığı parametreye göre parçalara bölen ve geriye döndüren metot.
@@ -126,6 +138,7 @@ def getLinks(response,url):
     list_a=[]
     source=BeautifulSoup(response.content,'lxml')
 
+    # print(re.findall("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+",str(source)))
 
 
 
@@ -139,12 +152,6 @@ def getLinks(response,url):
     for item in source.find_all('a'):
         appendUrl=item.get("href")
         if(appendUrl!=None and appendUrl!="#" and
-        # appendUrl.find(".jpg")==-1 and
-        # appendUrl.find(".pdf")==-1 and
-        # appendUrl.find(".jpeg")==-1 and
-        # appendUrl.find(".doc")==-1 and
-        # appendUrl.find(".docx")==-1 and
-        # appendUrl.find(".xlsx")==-1
         appendUrl.find("javascript:")==-1 and
         appendUrl.find("javascript:void(0)")==-1 and
         appendUrl.find("mailto:")==-1 and
@@ -260,10 +267,6 @@ for j in range(0,args.depth):
 
     SITE.list_a_same=removeDuplicates(SITE.list_a_same)
     SITE.list_a_different=removeDuplicates(SITE.list_a_different)
-
-
-
-
 
 
 # Elde edilen bilgilerin ekrana basılması
