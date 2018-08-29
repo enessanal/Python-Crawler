@@ -97,9 +97,10 @@ def error_print(msg):
 # İlgili Url'in Domain Name'ini Geriye Döndürür.
 def getDomainName(url):
     UrlParseObject = urlparse(url)
-    return UrlParseObject.netloc.replace("/","").replace(" ","").replace("\n","").replace("\r","")
+    return UrlParseObject.netloc.replace("/","").replace(" ","").replace("\n","").replace("\r","").replace("www.","")
 # End of getDomainName
 
+# Url doğrulaması yapan metot.
 def verifyUrl(url):
     try:
         response=requests.get(url,timeout=3,headers=SITE.headers)
@@ -117,7 +118,9 @@ def verifyUrl(url):
 
     except Exception as e:
         return False
+# End of verifyUrl
 
+# Parametre olarak alınan Url içerisindeki linkleri getiren metot.
 def getLinks(response,url):
 
     # session=dryscrape.Session()
@@ -125,10 +128,6 @@ def getLinks(response,url):
     # source=BeautifulSoup(session.body(),'lxml')
 
     list_a=[]
-
-
-
-
 
     source=BeautifulSoup(response.content,'lxml')
     i=0
@@ -138,23 +137,22 @@ def getLinks(response,url):
         appendUrl.find("javascript:")==-1 and
         appendUrl.find("javascript:void(0)")==-1 and
         appendUrl.find("mailto:")==-1 and
+        appendUrl.find("tel:")==-1 and
         appendUrl.find(".jpg")==-1 and
         appendUrl.find(".pdf")==-1 and
         appendUrl.find(".jpeg")==-1 and
         appendUrl.find(".doc")==-1 and
         appendUrl.find(".docx")==-1 and
         appendUrl.find(".xlsx")==-1):
-
             list_a.append(item)
-
     return list(set(list_a))
+# End of getLinks
 
 def crawlUrl(url):
     # Url içinde (varsa) gereksiz karakterler kaldırılır.
     crawl_url=url.replace(" ","").replace("\n","").replace("\r","")
     # scheme://netloc/path;parameters?query#fragment
     UrlParseObject = urlparse(crawl_url)
-    # cprint(,"green")
     if(UrlParseObject.scheme==""):
         crawl_url="http://"+crawl_url
         UrlParseObject = urlparse(crawl_url)
@@ -165,8 +163,8 @@ def crawlUrl(url):
 
 
 
-
 ################################################################################
+
 
 
 
@@ -239,11 +237,7 @@ except Exception as e:
 # End of Url doğrulama
 appendLinks(SITE.url,getLinks(response,SITE.url))
 
-
-
 arrayList=splitArray(SITE.list_a_same,args.threads)
-
-
 
 for j in range(0,args.depth):
 
