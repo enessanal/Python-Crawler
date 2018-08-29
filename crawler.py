@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from random import randint
+import urllib.parse
 
 class SITE:
     list_a_same=[]
@@ -52,7 +53,7 @@ def splitArray(array,slices):
 # Linkleri global diziye ekler.
 def appendLinks(url,urlList):
         for item in urlList:
-            joinedUrl=urljoin(url,item.get("href"))
+            joinedUrl=urljoin(url,item.get("href").replace(" ","").replace("\n","").replace("\r",""))
 
             if(getDomainName(joinedUrl) == SITE.domainName):
                 SITE.list_a_same.append(joinedUrl)
@@ -122,13 +123,7 @@ def verifyUrl(url):
 
 # Parametre olarak alınan Url içerisindeki linkleri getiren metot.
 def getLinks(response,url):
-
-    # session=dryscrape.Session()
-    # session.visit(url)
-    # source=BeautifulSoup(session.body(),'lxml')
-
     list_a=[]
-
     source=BeautifulSoup(response.content,'lxml')
     i=0
     for item in source.find_all('a'):
