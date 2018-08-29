@@ -125,20 +125,30 @@ def verifyUrl(url):
 def getLinks(response,url):
     list_a=[]
     source=BeautifulSoup(response.content,'lxml')
+
+
+
+
+
+
+
+
+
+
     i=0
     for item in source.find_all('a'):
         appendUrl=item.get("href")
         if(appendUrl!=None and appendUrl!="#" and
+        # appendUrl.find(".jpg")==-1 and
+        # appendUrl.find(".pdf")==-1 and
+        # appendUrl.find(".jpeg")==-1 and
+        # appendUrl.find(".doc")==-1 and
+        # appendUrl.find(".docx")==-1 and
+        # appendUrl.find(".xlsx")==-1
         appendUrl.find("javascript:")==-1 and
         appendUrl.find("javascript:void(0)")==-1 and
         appendUrl.find("mailto:")==-1 and
-        appendUrl.find("tel:")==-1 and
-        appendUrl.find(".jpg")==-1 and
-        appendUrl.find(".pdf")==-1 and
-        appendUrl.find(".jpeg")==-1 and
-        appendUrl.find(".doc")==-1 and
-        appendUrl.find(".docx")==-1 and
-        appendUrl.find(".xlsx")==-1):
+        appendUrl.find("tel:")==-1):
             list_a.append(item)
     return list(set(list_a))
 # End of getLinks
@@ -152,15 +162,11 @@ def crawlUrl(url):
         crawl_url="http://"+crawl_url
         UrlParseObject = urlparse(crawl_url)
     response = verifyUrl(crawl_url)
-
     if response:
         appendLinks(crawl_url,getLinks(response,crawl_url))
 
 
-
 ################################################################################
-
-
 
 
 # Help mesajını manipüle edebilmek için add_help=False seçeneğini ekledik.
@@ -234,6 +240,10 @@ appendLinks(SITE.url,getLinks(response,SITE.url))
 
 arrayList=splitArray(SITE.list_a_same,args.threads)
 
+
+SITE.list_a_same=removeDuplicates(SITE.list_a_same)
+SITE.list_a_different=removeDuplicates(SITE.list_a_different)
+
 for j in range(0,args.depth):
 
     arrayList=splitArray(SITE.list_a_same,args.threads)
@@ -250,6 +260,11 @@ for j in range(0,args.depth):
 
     SITE.list_a_same=removeDuplicates(SITE.list_a_same)
     SITE.list_a_different=removeDuplicates(SITE.list_a_different)
+
+
+
+
+
 
 # Elde edilen bilgilerin ekrana basılması
 print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
@@ -279,19 +294,6 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 # End of ekrana basma
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
