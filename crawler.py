@@ -8,6 +8,8 @@ import urllib.parse
 from progress.bar import Bar
 
 class SITE:
+    list_js=[]
+    list_endpoint=[]
     list_a_same=[]
     list_a_same_crawl=[]
     list_a_different=[]
@@ -29,7 +31,6 @@ class Thread(threading.Thread):
     def __init__(self,urlList):
         threading.Thread.__init__(self)
         self.urlList=urlList
-
     def run(self):
         for url in self.urlList:
             if(url.find(".ico")==-1 and
@@ -87,18 +88,6 @@ def splitArray(array,slices):
     return arrayList
 # End of splitArray
 
-# Linkleri global diziye ekler.
-def appendLinks(url,urlList):
-        for item in urlList:
-            joinedUrl=urljoin(url,item.get("href").replace(" ","").replace("\n","").replace("\r",""))
-
-            if(getDomainName(joinedUrl) == SITE.domainName):
-                SITE.list_a_same.append(joinedUrl)
-                SITE.list_a_same_crawl.append(joinedUrl)
-            else:
-                SITE.list_a_different.append(joinedUrl)
-# End of appendLinks
-
 # Color Print: Renkli yazı yazmayı sağlayan metot.
 def cprint(msg,color="black"):
     colors={
@@ -132,6 +121,63 @@ def verbose_print(msg):
 def error_print(msg):
     cprint("--> "+msg,"red")
 # End of error_print
+
+def endPointHelper(urlList):
+    list_endpoint=[]
+    for url in urlList:
+        response=verifyUrl(url)
+        if response:
+            source=str(response.content)
+            for match in re.compile(r'([\s]*url)([\s]?)([:])([\s]?)[\"]([^\'\"]*)[\"]').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(5),"cyan")
+                list_endpoint.append(match.group(5))
+
+            for match in re.compile(r'([\s]*url)([\s]?)([:])([\s]?)[\']([^\'\"]*)[\']').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(5),"cyan")
+                list_endpoint.append(match.group(5))
+
+            for match in re.compile(r'([\"]([\s]?)url)([\s]?)([:])([\s]?)(.*)[\"]').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(6),"cyan")
+                list_endpoint.append(match.group(6))
+
+            for match in re.compile(r'([\']([\s]?)url)([\s]?)([:])([\s]?)(.*)[\']').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(6),"cyan")
+                list_endpoint.append(match.group(6))
+
+            for match in re.compile(r'[$][.](post|get)[(][\s]?[\"\']([^\'\"]*)[\"\']').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(2),"cyan")
+                list_endpoint.append(match.group(2))
+
+            for match in re.compile(r'[$][.](ajax)[(][\s]?[\"\']([^\'\"]*)[\"\']').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(2),"cyan")
+                list_endpoint.append(match.group(2))
+
+            for match in re.compile(r'[$][(][\s]?[\"\']([^\'\"]*)[\s]?[\"\'][)][.](load)[(][\s]?[\"\']([^\'\"]*)[\s]?[\"\']').finditer(source):
+                # cprint(match,"red")
+                # cprint(match.group(3),"cyan")
+                list_endpoint.append(match.group(3))
+    return list_endpoint;
+
+
+# Linkleri global diziye ekler.
+def appendLinks(url,urlList):
+        for item in urlList:
+            joinedUrl=urljoin(url,item.get("href").replace(" ","").replace("\n","").replace("\r",""))
+
+            if joinedUrl.find(".js")!=-1: SITE.list_js.append(joinedUrl)
+
+            if(getDomainName(joinedUrl) == SITE.domainName):
+                SITE.list_a_same.append(joinedUrl)
+                SITE.list_a_same_crawl.append(joinedUrl)
+            else:
+                SITE.list_a_different.append(joinedUrl)
+# End of appendLinks
 
 # İlgili Url'in Domain Name'ini Geriye Döndürür.
 def getDomainName(url):
@@ -170,7 +216,6 @@ def getLinks(response,url):
             new_tag =source.new_tag('a',href=lnk[0])
             list_a.append(new_tag)
 
-
     for item in source.find_all('a'):
         appendUrl=item.get("href")
         if(appendUrl!=None and appendUrl!="#" and
@@ -203,7 +248,7 @@ parser.add_argument("-d","--depth",help="Crawl İşleminin Derinliği (Varsayıl
 parser.add_argument('-v',"--verbose", help="Ayrıntılı çıktı modu.", action="store_true")
 parser.add_argument('--version', action='version',version='%(prog)s 1.0', help="Programın versiyonunu yazdır ve çık.")
 parser.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,help='Yardım mesajını göster ve çık.')
-parser.add_argument('-t', '--threads',help='Programın Çalışırken Kullanacağı Thread Sayısı (Varsayılan=50)',type=int,default=50)
+parser.add_argument('-t', '--threads',help='Programın Çalışırken Kullanacağı Thread Sayısı (Varsayılan=100)',type=int,default=100)
 args=parser.parse_args()
 
 # Url içinde (varsa) gereksiz karakterler kaldırılır.
@@ -263,20 +308,14 @@ except Exception as e:
 # End of Url doğrulama
 
 appendLinks(SITE.url,getLinks(response,SITE.url))
-
 arrayList=splitArray(SITE.list_a_same_crawl,args.threads)
 
 SITE.list_a_same=removeDuplicates(SITE.list_a_same)
 SITE.list_a_different=removeDuplicates(SITE.list_a_different)
 SITE.list_a_same_crawl=removeDuplicates(SITE.list_a_same_crawl)
 
-
-
 for j in range(0,args.depth):
-
-
     bar = Bar(str(j+1)+"/"+str(args.depth), max=len(SITE.list_a_same_crawl))
-
     arrayList=splitArray(SITE.list_a_same_crawl,args.threads)
     SITE.list_a_same_crawl=[]
     threads=[]
@@ -298,15 +337,32 @@ for j in range(0,args.depth):
 
 # Elde edilen bilgilerin ekrana basılması
 
+
+
+SITE.list_js.append(SITE.url)
+SITE.list_js=removeDuplicates(SITE.list_js)
+
+
+for relative in endPointHelper(SITE.list_js):
+    joinedUrl=urljoin(SITE.url,relative.replace(" ","").replace("\n","").replace("\r",""))
+    SITE.list_endpoint.append(joinedUrl)
+
+
+
+for url in SITE.list_endpoint:
+    if url=="": SITE.list_endpoint.remove(url)
+
+
+
+if SITE.list_endpoint:
+    SITE.list_endpoint=removeDuplicates(SITE.list_endpoint)
+    SITE.list_endpoint.sort(key=len)
+
 if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
     print("\nLinkler:")
-
-
     SITE.list_a_different.sort(key=len)
     SITE.list_a_same.sort(key=len)
-
     i=0
-
     for link in SITE.list_a_different:
         i+=1
         print("{} -) {}".format(i,link))
@@ -315,9 +371,7 @@ if len(SITE.list_a_same) > 0 or len(SITE.list_a_different) > 0 :
         i+=1
         print("{} -) {}".format(i,link))
 
-
 print()
-
 print("Link Sayısı....: [ %d ] " %(len(SITE.list_a_same)+len(SITE.list_a_different)))
 print("Url............: [ %s ] " %SITE.url)
 print("Domain.........: [ %s ] " %SITE.domainName)
@@ -329,7 +383,12 @@ else:
 
 # End of ekrana basma
 
-
+print("Endpoints......: [ %d ] " %len(SITE.list_endpoint))
+if SITE.list_endpoint:
+    counter=0
+    for testlinks in SITE.list_endpoint:
+        counter+=1
+        print("{} => {}".format(counter,testlinks))
 
 
 
