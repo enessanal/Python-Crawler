@@ -128,16 +128,19 @@ def endPointHelper(urlList):
         response=verifyUrl(url)
         if response:
             source=str(response.content)
+            # Pattern => url: "api/getList" vb.
             for match in re.compile(r'([\s]*url)([\s]?)([:])([\s]?)[\"]([^\'\"]*)[\"]').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(5),"cyan")
                 list_endpoint.append(match.group(5))
 
+            # Pattern => url: "api/getList" vb.
             for match in re.compile(r'([\s]*url)([\s]?)([:])([\s]?)[\']([^\'\"]*)[\']').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(5),"cyan")
                 list_endpoint.append(match.group(5))
 
+            # Pattern => url: "api/getList" vb.
             for match in re.compile(r'([\"]([\s]?)url)([\s]?)([:])([\s]?)(.*)[\"]').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(6),"cyan")
@@ -148,22 +151,25 @@ def endPointHelper(urlList):
                 # cprint(match.group(6),"cyan")
                 list_endpoint.append(match.group(6))
 
+            # Pattern => $.post("url") vb.
+            # Pattern => $.get("url") vb.
             for match in re.compile(r'[$][.](post|get)[(][\s]?[\"\']([^\'\"]*)[\"\']').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(2),"cyan")
                 list_endpoint.append(match.group(2))
 
+            # Pattern => $.ajax("url") vb.
             for match in re.compile(r'[$][.](ajax)[(][\s]?[\"\']([^\'\"]*)[\"\']').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(2),"cyan")
                 list_endpoint.append(match.group(2))
 
+            # Pattern => $(#divid).load("url") vb.
             for match in re.compile(r'[$][(][\s]?[\"\']([^\'\"]*)[\s]?[\"\'][)][.](load)[(][\s]?[\"\']([^\'\"]*)[\s]?[\"\']').finditer(source):
                 # cprint(match,"red")
                 # cprint(match.group(3),"cyan")
                 list_endpoint.append(match.group(3))
     return list_endpoint;
-
 
 # Linkleri global diziye ekler.
 def appendLinks(url,urlList):
@@ -337,22 +343,15 @@ for j in range(0,args.depth):
 
 # Elde edilen bilgilerin ekrana basılması
 
-
-
 SITE.list_js.append(SITE.url)
 SITE.list_js=removeDuplicates(SITE.list_js)
-
 
 for relative in endPointHelper(SITE.list_js):
     joinedUrl=urljoin(SITE.url,relative.replace(" ","").replace("\n","").replace("\r",""))
     SITE.list_endpoint.append(joinedUrl)
 
-
-
 for url in SITE.list_endpoint:
     if url=="": SITE.list_endpoint.remove(url)
-
-
 
 if SITE.list_endpoint:
     SITE.list_endpoint=removeDuplicates(SITE.list_endpoint)
