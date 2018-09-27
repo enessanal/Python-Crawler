@@ -20,4 +20,5 @@ apt-get install atom
 
 
 Keyboard Shortcuts
-gnome-terminal -> CTRL ALT T
+gnome-terminal   -> CTRL ALT T
+hide all windows -> Super D
