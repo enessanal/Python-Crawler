@@ -18,6 +18,12 @@ apt-get update
 apt-get install atom
 sudo apt-get install python3-pip
 
+
+
+
+echo bind ^S savefile main >  ~/.nanorc
+
+
 Keyboard Shortcuts
 gnome-terminal   -> CTRL ALT T
 hide all windows -> Super D
