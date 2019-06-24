@@ -3,6 +3,7 @@ echo "alias ..=\"cd ..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias ...=\"cd ..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias ....=\"cd ..\\..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias .....=\"cd ..\\..\\..\\..\" " | sudo tee --append /etc/bash.bashrc > /dev/null
+echo "alias l=ls"  | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias ll=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFh --color=always\" " | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias lls=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFhS --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
 echo "alias llsr=\"ls --time-style='+%d.%m.%y %H:%M:%S' -lahFhSr --color=always\"" | sudo tee --append /etc/bash.bashrc > /dev/null
